@@ -314,6 +314,239 @@
       <child>livox_lidar</child>
     </joint>
 
+    <!-- ========== 云台模块开始 ========== -->
+
+    <!-- 云台底座 -->
+    <link name="gimbal_base">
+      <pose relative_to="chassis">0 0 0.125 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.002</ixx>
+          <iyy>0.002</iyy>
+          <izz>0.002</izz>
+        </inertia>
+      </inertial>
+      <visual name="gimbal_base_visual">
+        <geometry>
+          <box>
+            <size>0.12 0.12 0.06</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+          <specular>0.3 0.3 0.3 1</specular>
+        </material>
+      </visual>
+      <collision name="gimbal_base_collision">
+        <geometry>
+          <box>
+            <size>0.12 0.12 0.06</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="gimbal_base_joint" type="fixed">
+      <parent>chassis</parent>
+      <child>gimbal_base</child>
+    </joint>
+
+    <!-- 云台偏航轴 (Yaw) -->
+    <link name="gimbal_yaw">
+      <pose relative_to="gimbal_base">0 0 0.08 0 0 0</pose>
+      <inertial>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <iyy>0.001</iyy>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      <visual name="gimbal_yaw_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.10</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.8 0.2 0.2 1</ambient>
+          <diffuse>0.8 0.2 0.2 1</diffuse>
+          <specular>0.5 0.1 0.1 1</specular>
+        </material>
+      </visual>
+      <collision name="gimbal_yaw_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.10</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="gimbal_yaw_joint" type="revolute">
+      <parent>gimbal_base</parent>
+      <child>gimbal_yaw</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-3.14159</lower>
+          <upper>3.14159</upper>
+          <effort>10</effort>
+          <velocity>3.14</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.1</damping>
+          <friction>0.01</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- 云台俯仰支架 -->
+    <link name="gimbal_pitch_bracket">
+      <pose relative_to="gimbal_yaw">0 0 0.08 0 0 0</pose>
+      <inertial>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <iyy>0.001</iyy>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      <visual name="gimbal_pitch_bracket_visual">
+        <geometry>
+          <box>
+            <size>0.08 0.12 0.04</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.8 1</ambient>
+          <diffuse>0.2 0.2 0.8 1</diffuse>
+          <specular>0.1 0.1 0.5 1</specular>
+        </material>
+      </visual>
+      <collision name="gimbal_pitch_bracket_collision">
+        <geometry>
+          <box>
+            <size>0.08 0.12 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="gimbal_pitch_bracket_joint" type="fixed">
+      <parent>gimbal_yaw</parent>
+      <child>gimbal_pitch_bracket</child>
+    </joint>
+
+    <!-- 云台俯仰轴 (Pitch) -->
+    <link name="gimbal_pitch">
+      <pose relative_to="gimbal_pitch_bracket">0.06 0 0 0 0 0</pose>
+      <inertial>
+        <mass>0.25</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <iyy>0.002</iyy>
+          <izz>0.002</izz>
+        </inertia>
+      </inertial>
+      <visual name="gimbal_pitch_visual">
+        <geometry>
+          <box>
+            <size>0.10 0.08 0.06</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.2 0.8 0.2 1</ambient>
+          <diffuse>0.2 0.8 0.2 1</diffuse>
+          <specular>0.1 0.5 0.1 1</specular>
+        </material>
+      </visual>
+      <collision name="gimbal_pitch_collision">
+        <geometry>
+          <box>
+            <size>0.10 0.08 0.06</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="gimbal_pitch_joint" type="revolute">
+      <parent>gimbal_pitch_bracket</parent>
+      <child>gimbal_pitch</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-0.785398</lower>          <!-- -45度 -->
+          <upper>0.785398</upper>          <!-- +45度 -->
+          <effort>10</effort>
+          <velocity>2.0</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.1</damping>
+          <friction>0.01</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- 摄像头 (安装在云台俯仰轴上) -->
+    <link name="camera">
+      <pose relative_to="gimbal_pitch">0.08 0 0 0 0 0</pose>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.0001</ixx>
+          <iyy>0.0001</iyy>
+          <izz>0.0001</izz>
+        </inertia>
+      </inertial>
+      <visual name="camera_visual">
+        <geometry>
+          <box>
+            <size>0.06 0.04 0.04</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+      <collision name="camera_collision">
+        <geometry>
+          <box>
+            <size>0.06 0.04 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+      <!-- 摄像头传感器 -->
+      <sensor name="camera" type="camera">
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>1.047</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+        </camera>
+      </sensor>
+    </link>
+
+    <joint name="camera_joint" type="fixed">
+      <parent>gimbal_pitch</parent>
+      <child>camera</child>
+    </joint>
+
+    <!-- ========== 云台模块结束 ========== -->
+
     <!-- IMU SENSOR ON CHASSIS -->
     <link name="imu_link">
       <pose relative_to="chassis">0 0 0 0 0 0</pose>
@@ -390,6 +623,23 @@
       <tf_topic>/tf</tf_topic>
       <frame_id>odom</frame_id>
       <child_frame_id>base_footprint</child_frame_id>
+    </plugin>
+
+    <!-- 云台控制插件 -->
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal_yaw_joint</joint_name>
+      <topic>/gimbal/yaw/cmd_pos</topic>
+      <p_gain>10</p_gain>
+      <i_gain>0.1</i_gain>
+      <d_gain>0.5</d_gain>
+    </plugin>
+
+    <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal_pitch_joint</joint_name>
+      <topic>/gimbal/pitch/cmd_pos</topic>
+      <p_gain>10</p_gain>
+      <i_gain>0.1</i_gain>
+      <d_gain>0.5</d_gain>
     </plugin>
 
   </model>

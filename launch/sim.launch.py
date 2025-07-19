@@ -94,6 +94,29 @@ def generate_launch_description():
         output="screen",
     )
 
+    gimbal_yaw_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["/gimbal/yaw/cmd_pos@std_msgs/msg/Float64@gz.msgs.Double"],
+        output="screen",
+    )
+
+    # Bridge for gimbal pitch control
+    gimbal_pitch_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["/gimbal/pitch/cmd_pos@std_msgs/msg/Float64@gz.msgs.Double"],
+        output="screen",
+    )
+
+    # Bridge for camera
+    camera_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["/camera@sensor_msgs/msg/Image@gz.msgs.Image"],
+        output="screen",
+    )
+
     # 延迟生成机器人，确保Gazebo完全启动
     delayed_spawn = TimerAction(period=3.0, actions=[spawn_robot])
 
@@ -104,5 +127,8 @@ def generate_launch_description():
             delayed_spawn,
             cmd_vel_bridge,
             lidar_bridge,
+            gimbal_yaw_bridge,
+            gimbal_pitch_bridge,
+            camera_bridge,
         ]
     )
