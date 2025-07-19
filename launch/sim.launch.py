@@ -23,9 +23,9 @@ def generate_launch_description():
     # World file path
     world_file = PathJoinSubstitution([pkg_share, "worlds", "omni.world"])
 
-    # Robot model path - 使用完整路径
+    # Robot model path
     robot_model_path = PathJoinSubstitution(
-        [pkg_share, "moudles", "mecanmu_car", "model.sdf"]
+        [pkg_share, "moudles", "mecanum_car", "model.sdf"]
     )
 
     # Launch arguments
