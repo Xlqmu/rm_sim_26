@@ -8,7 +8,7 @@ from launch.actions import (
     TimerAction,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -22,6 +22,10 @@ def generate_launch_description():
 
     # World file path
     world_file = PathJoinSubstitution([pkg_share, "worlds", "omni.world"])
+
+    robot_urdf_path = PathJoinSubstitution(
+        [pkg_share, "moudles", "mecanum_car", "robot.urdf"]
+    )
 
     # Robot model path
     robot_model_path = PathJoinSubstitution(
@@ -53,7 +57,19 @@ def generate_launch_description():
         }.items(),
     )
 
-    # 使用 Node 方式创建机器人实体
+    # Robot State Publisher
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
+        output="screen",
+        parameters=[
+            {"use_sim_time": use_sim_time},
+            {"robot_description": Command(["cat ", robot_urdf_path])},
+        ],
+    )
+
+    # Spawn the robot in Gazebo
     spawn_robot = Node(
         package="ros_gz_sim",
         executable="create",
@@ -67,7 +83,7 @@ def generate_launch_description():
             "-y",
             "0.0",
             "-z",
-            "0.15",
+            "0.3",
             "-R",
             "0.0",
             "-P",
@@ -94,6 +110,15 @@ def generate_launch_description():
         output="screen",
     )
 
+    # Bridge for IMU topic
+    imu_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["/imu@sensor_msgs/msg/Imu@gz.msgs.IMU"],
+        output="screen",
+    )
+
+    # Bridge for gimbal yaw control
     gimbal_yaw_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
@@ -117,18 +142,40 @@ def generate_launch_description():
         output="screen",
     )
 
-    # 延迟生成机器人，确保Gazebo完全启动
+    # Bridge for pose (TF)
+    pose_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=[
+            "/model/mecanum_bot/pose@geometry_msgs/msg/PoseStamped@gz.msgs.Pose"
+        ],
+        output="screen",
+    )
+
+    # Bridge for joint states
+    joint_state_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["/joint_states@sensor_msgs/msg/JointState@gz.msgs.Model"],
+        output="screen",
+    )
+
+    # Delay the spawning of the robot to ensure Gazebo is ready
     delayed_spawn = TimerAction(period=3.0, actions=[spawn_robot])
 
     return LaunchDescription(
         [
             declare_use_sim_time,
             gazebo_launch,
+            robot_state_publisher,
             delayed_spawn,
             cmd_vel_bridge,
             lidar_bridge,
+            imu_bridge,
             gimbal_yaw_bridge,
             gimbal_pitch_bridge,
             camera_bridge,
+            pose_bridge,
+            joint_state_bridge,
         ]
     )

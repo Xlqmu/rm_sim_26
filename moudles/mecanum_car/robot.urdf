@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<robot name="mecanum_robot">
+
+  <!-- BASE FOOTPRINT -->
+  <link name="base_footprint"/>
+
+  <!-- CHASSIS -->
+  <link name="chassis">
+    <visual>
+      <geometry>
+        <box size="0.6 0.4 0.15"/>
+      </geometry>
+      <material name="grey">
+        <color rgba="0.35 0.35 0.35 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="base_footprint_to_chassis" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="chassis"/>
+    <origin xyz="0 0 0.225" rpy="0 0 0"/>
+  </joint>
+
+  <!-- WHEELS -->
+  <link name="front_left_wheel_link"/>
+  <joint name="front_left_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="front_left_wheel_link"/>
+    <origin xyz="0.25 0.25 -0.075" rpy="1.5707 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="front_right_wheel_link"/>
+  <joint name="front_right_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="front_right_wheel_link"/>
+    <origin xyz="0.25 -0.25 -0.075" rpy="1.5707 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="rear_left_wheel_link"/>
+  <joint name="rear_left_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="rear_left_wheel_link"/>
+    <origin xyz="-0.25 0.25 -0.075" rpy="1.5707 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="rear_right_wheel_link"/>
+  <joint name="rear_right_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="rear_right_wheel_link"/>
+    <origin xyz="-0.25 -0.25 -0.075" rpy="1.5707 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- LIDAR -->
+  <link name="livox_lidar"/>
+  <joint name="lidar_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="livox_lidar"/>
+    <origin xyz="0.2 0 0.125" rpy="0 0 0"/>
+  </joint>
+
+  <!-- IMU -->
+  <link name="imu_link"/>
+  <joint name="imu_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- GIMBAL BASE -->
+  <link name="gimbal_base"/>
+  <joint name="gimbal_base_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="gimbal_base"/>
+    <origin xyz="0 0 0.125" rpy="0 0 0"/>
+  </joint>
+
+  <!-- GIMBAL YAW（关键：连接gimbal_base和gimbal_yaw）-->
+  <link name="gimbal_yaw"/>
+  <joint name="gimbal_yaw_joint" type="revolute">
+    <parent link="gimbal_base"/>
+    <child link="gimbal_yaw"/>
+    <origin xyz="0 0 0.08" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14159" upper="3.14159" effort="10" velocity="3.14"/>
+  </joint>
+
+  <!-- GIMBAL PITCH BRACKET（关键：连接gimbal_yaw和gimbal_pitch_bracket）-->
+  <link name="gimbal_pitch_bracket"/>
+  <joint name="gimbal_pitch_bracket_joint" type="fixed">
+    <parent link="gimbal_yaw"/>
+    <child link="gimbal_pitch_bracket"/>
+    <origin xyz="0 0 0.08" rpy="0 0 0"/>
+  </joint>
+
+  <!-- GIMBAL PITCH（关键：连接gimbal_pitch_bracket和gimbal_pitch）-->
+  <link name="gimbal_pitch"/>
+  <joint name="gimbal_pitch_joint" type="revolute">
+    <parent link="gimbal_pitch_bracket"/>
+    <child link="gimbal_pitch"/>
+    <origin xyz="0.06 0 0" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-0.785398" upper="0.785398" effort="10" velocity="2.0"/>
+  </joint>
+
+  <!-- CAMERA -->
+  <link name="camera"/>
+  <joint name="camera_joint" type="fixed">
+    <parent link="gimbal_pitch"/>
+    <child link="camera"/>
+    <origin xyz="0.08 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>
