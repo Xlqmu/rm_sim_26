@@ -283,29 +283,19 @@
         </geometry>
       </collision>
       <!-- LIDAR SENSOR -->
-      <sensor name="lidar" type="gpu_lidar">
-        <update_rate>10</update_rate>
-        <lidar>
-          <scan>
-            <horizontal>
-              <samples>360</samples>
-              <resolution>1</resolution>
-              <min_angle>-3.14159</min_angle>
-              <max_angle>3.14159</max_angle>
-            </horizontal>
-            <vertical>
-              <samples>1</samples>
-              <resolution>1</resolution>
-              <min_angle>0</min_angle>
-              <max_angle>0</max_angle>
-            </vertical>
-          </scan>
+      <sensor name="RGLLidar" type="custom">
+        <plugin filename="RGLServerPluginInstance" name="rgl::RGLServerPluginInstance">
           <range>
-            <min>0.1</min>
-            <max>30.0</max>
-            <resolution>0.01</resolution>
+            <min>0.05</min>
+            <max>245</max>
           </range>
-        </lidar>
+          <update_rate>10</update_rate>
+          <update_on_paused_sim>false</update_on_paused_sim>
+          <topic>livox/lidar</topic>
+          <frame>livox_lidar</frame>
+          <pattern_preset_path>/home/xlqmu/rm_sim_26/plugin/LivoxMid360.mat3x4f</pattern_preset_path>
+          <!-- <pattern_preset>Livox Mid360</pattern_preset> -->
+        </plugin>
       </sensor>
     </link>
 
