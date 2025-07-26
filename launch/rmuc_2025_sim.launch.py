@@ -139,7 +139,7 @@ def generate_launch_description():
     imu_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        arguments=["/imu@sensor_msgs/msg/Imu@gz.msgs.IMU"],
+        arguments=["/livox/imu@sensor_msgs/msg/Imu@gz.msgs.IMU"],
         output="screen",
     )
 
