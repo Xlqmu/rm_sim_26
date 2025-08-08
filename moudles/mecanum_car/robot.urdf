@@ -2,7 +2,7 @@
 <robot name="mecanum_robot">
 
   <!-- BASE FOOTPRINT -->
-  <link name="base_footprint"/>
+  <link name="body"/>
 
   <!-- CHASSIS -->
   <link name="chassis">
@@ -16,8 +16,8 @@
     </visual>
   </link>
 
-  <joint name="base_footprint_to_chassis" type="fixed">
-    <parent link="base_footprint"/>
+  <joint name="body_to_chassis" type="fixed">
+    <parent link="body"/>
     <child link="chassis"/>
     <origin xyz="0 0 0.225" rpy="0 0 0"/>
   </joint>

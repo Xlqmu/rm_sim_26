@@ -132,6 +132,7 @@ def generate_launch_description():
         package="ros_gz_bridge",
         executable="parameter_bridge",
         arguments=["/livox/lidar@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked"],
+        # arguments=["/livox/lidar@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked"],
         output="screen",
     )
 

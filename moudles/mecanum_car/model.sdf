@@ -3,7 +3,7 @@
   <model name="mecanum_robot">
 
     <!-- BASE FOOTPRINT (虚拟链接) -->
-    <link name="base_footprint">
+    <link name="body">
       <inertial>
         <mass>0.001</mass>
         <inertia>
@@ -16,7 +16,7 @@
 
     <!-- CHASSIS -->
     <link name="chassis">
-      <pose relative_to="base_footprint">0 0 0.225 0 0 0</pose>
+      <pose relative_to="body">0 0 0.225 0 0 0</pose>
       <inertial>
         <mass>15.0</mass>
         <inertia>
@@ -45,9 +45,9 @@
       </collision>
     </link>
 
-    <!-- BASE_FOOTPRINT TO CHASSIS JOINT -->
-    <joint name="base_footprint_to_chassis" type="fixed">
-      <parent>base_footprint</parent>
+    <!-- body TO CHASSIS JOINT -->
+    <joint name="body_to_chassis" type="fixed">
+      <parent>body</parent>
       <child>chassis</child>
     </joint>
 
@@ -600,7 +600,7 @@
       <topic>/cmd_vel</topic>
       <tf_topic>/tf</tf_topic>
       <frame_id>odom</frame_id>
-      <child_frame_id>base_footprint</child_frame_id>
+      <child_frame_id>body</child_frame_id>
     </plugin>
 
     <!-- 云台控制插件 -->
